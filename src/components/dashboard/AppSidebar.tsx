@@ -14,6 +14,7 @@ import { useAuth } from '@/context/AuthContext';
 
 const mainNav = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
+  { title: 'Rural Coverage', url: '/admin/rural-coverage', icon: Map },
   { title: 'Map View', url: '/map', icon: Map },
   { title: 'Pending Doctors', url: '/admin/pending-doctors', icon: UserCheck, badge: null },
   { title: 'Doctor Verification', url: '/doctors', icon: UserCheck },

@@ -41,12 +41,18 @@ export default function DoctorOtpVerify() {
     if (!state.phone) return;
     setResendCountdown(30);
 
-    // If redirected here because "already exists", the signup API didn't actually send an OTP.
+    // If redirected here because "already exists" or from Login page, the signup API didn't actually send an OTP.
     // We should send it now automatically.
     if (state.isExistingUser) {
       setError('');
       setIsLoading(true);
-      sendDoctorOtp({ phone: state.phone, doctorId: '', name: '' })
+      // Backend send-otp strictly requires name and doctorId for validation, 
+      // even if the user already exists. We pass placeholders to satisfy it.
+      sendDoctorOtp({ 
+        phone: state.phone, 
+        doctorId: state.doctorId || 'LOGIN', 
+        name: state.name || 'Returning Doctor' 
+      })
         .then(() => setError('Welcome back! We just sent a new OTP to your phone.'))
         .catch(() => setError('Failed to send OTP. Please click Resend OTP.'))
         .finally(() => setIsLoading(false));
@@ -72,8 +78,8 @@ export default function DoctorOtpVerify() {
       // Update auth context with OTP-based session
       loginWithOtpToken(res.token, res.user);
 
-      // Check approval status
-      const isApproved = res.user?.approved !== false;
+      // Check approval status (checking both isActive and approved to be safe)
+      const isApproved = res.user?.isActive === true || res.user?.approved === true;
 
       if (!isApproved) {
         setPendingApproval(true);
@@ -269,7 +275,9 @@ export default function DoctorOtpVerify() {
             <button
               type="button"
               disabled={resendCountdown > 0}
-              onClick={() => navigate('/doctor-signup', { state: { prefill: { phone } } })}
+              onClick={() => navigate('/doctor-signup', { 
+                state: { prefill: { phone }, isExistingUser: state.isExistingUser } 
+              })}
               className="text-xs text-primary hover:underline disabled:text-muted-foreground disabled:no-underline disabled:cursor-not-allowed"
             >
               {resendCountdown > 0 ? `Resend OTP in ${resendCountdown}s` : 'Resend OTP'}

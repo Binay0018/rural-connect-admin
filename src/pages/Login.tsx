@@ -127,59 +127,86 @@ export default function Login() {
             )}
           </AnimatePresence>
 
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="text-xs font-medium text-foreground mb-1.5 block">Email Address</label>
-              <input
-                type="email"
-                value={email}
-                onChange={e => { setEmail(e.target.value); setError(''); }}
-                placeholder={placeholders[activeTab].email}
-                className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring transition-shadow"
-                required
-              />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-foreground mb-1.5 block">Password</label>
-              <div className="relative">
+          {/* Form */}
+          {activeTab === 'admin' ? (
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="text-xs font-medium text-foreground mb-1.5 block">Email Address</label>
                 <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={e => { setPassword(e.target.value); setError(''); }}
-                  placeholder="••••••••"
-                  className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring transition-shadow pr-10"
+                  type="email"
+                  value={email}
+                  onChange={e => { setEmail(e.target.value); setError(''); }}
+                  placeholder={placeholders.admin.email}
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring transition-shadow"
                   required
                 />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
               </div>
-              <p className="text-[10px] text-muted-foreground mt-1">{placeholders[activeTab].hint}</p>
-            </div>
+              <div>
+                <label className="text-xs font-medium text-foreground mb-1.5 block">Password</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={e => { setPassword(e.target.value); setError(''); }}
+                    placeholder="••••••••"
+                    className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring transition-shadow pr-10"
+                    required
+                  />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-1">{placeholders.admin.hint}</p>
+              </div>
 
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full gradient-primary text-primary-foreground shadow-elevated hover:opacity-90 transition-opacity"
-            >
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <span className="h-3.5 w-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                  Signing in...
-                </span>
-              ) : (
-                `Sign In as ${activeTab === 'admin' ? 'Admin' : 'Doctor'}`
-              )}
-            </Button>
-          </form>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full gradient-primary text-primary-foreground shadow-elevated hover:opacity-90 transition-opacity"
+              >
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-3.5 w-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                    Signing in...
+                  </span>
+                ) : (
+                  'Sign In as Admin'
+                )}
+              </Button>
+            </form>
+          ) : (
+            // Doctor Login Form (OTP Based)
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              navigate('/doctor-verify', { state: { phone: email, isExistingUser: true } });
+            }} className="space-y-4">
+              <div>
+                <label className="text-xs font-medium text-foreground mb-1.5 block">Phone Number</label>
+                <input
+                  type="tel"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="+91-98765-43210"
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring transition-shadow"
+                  required
+                />
+                <p className="text-[10px] text-muted-foreground mt-1">We will send an OTP to verify your identity</p>
+              </div>
 
-          {activeTab === 'doctor' && (
-            <p className="text-center text-xs text-muted-foreground mt-4">
-              New doctor?{' '}
-              <Link to="/doctor-signup" className="text-primary hover:underline font-medium">
-                Register here
-              </Link>
-            </p>
+              <Button
+                type="submit"
+                className="w-full gradient-primary text-primary-foreground shadow-elevated hover:opacity-90 transition-opacity"
+              >
+                Send OTP
+              </Button>
+
+              <p className="text-center text-xs text-muted-foreground mt-4">
+                New doctor?{' '}
+                <Link to="/doctor-signup" className="text-primary hover:underline font-medium">
+                  Register here
+                </Link>
+              </p>
+            </form>
           )}
         </div>
       </motion.div>

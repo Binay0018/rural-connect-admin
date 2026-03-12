@@ -52,7 +52,8 @@ function makeToken(userId: string): string {
 
 /** Build an AuthUser from an OTP-verified backend response */
 function buildOtpUser(token: string, backendUser: VerifyOtpResponse['user']): AuthUser {
-  const isApproved = backendUser?.approved !== false;
+  // If the backend returns isActive, use it. Otherwise, assume false unless explicitly approved.
+  const isApproved = backendUser?.isActive === true || backendUser?.approved === true;
   return {
     id: String(backendUser?.id || backendUser?.doctorId || 'otp_doctor'),
     name: String(backendUser?.name || 'Doctor'),

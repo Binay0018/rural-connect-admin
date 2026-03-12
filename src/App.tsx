@@ -15,6 +15,7 @@ import DoctorVerificationPanel from "./pages/admin/DoctorVerificationPanel.tsx";
 import PharmacyInventory from "./pages/PharmacyInventory.tsx";
 import CoverageAnalytics from "./pages/CoverageAnalytics.tsx";
 import Notifications from "./pages/Notifications.tsx";
+import RuralCoverageDashboard from "./pages/admin/RuralCoverageDashboard.tsx";
 
 // Auth pages
 import Login from "./pages/Login.tsx";
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/admin/pending-doctors" element={<ProtectedRoute allowedRoles={["admin"]}><DoctorVerificationPanel /></ProtectedRoute>} />
             <Route path="/pharmacy" element={<ProtectedRoute allowedRoles={["admin"]}><PharmacyInventory /></ProtectedRoute>} />
             <Route path="/analytics" element={<ProtectedRoute allowedRoles={["admin"]}><CoverageAnalytics /></ProtectedRoute>} />
+            <Route path="/admin/rural-coverage" element={<ProtectedRoute allowedRoles={["admin"]}><RuralCoverageDashboard /></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute allowedRoles={["admin"]}><Notifications /></ProtectedRoute>} />
 
             {/* Doctor-only routes */}
