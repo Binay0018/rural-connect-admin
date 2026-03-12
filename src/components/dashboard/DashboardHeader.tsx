@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
 
+import { NotificationDropdown } from '@/components/admin/NotificationDropdown';
+
 interface DashboardHeaderProps {
   title: string;
   subtitle?: string;
@@ -21,7 +23,7 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
         {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
       </div>
 
-      <div className="hidden md:flex items-center gap-1 rounded-lg bg-muted px-3 py-1.5">
+      <div className="hidden md:flex items-center gap-1 rounded-lg bg-muted px-3 py-1.5 border border-transparent focus-within:border-primary/30 transition-colors">
         <Search className="h-3.5 w-3.5 text-muted-foreground" />
         <input
           type="text"
@@ -30,10 +32,7 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
         />
       </div>
 
-      <button className="relative rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
-        <Bell className="h-4 w-4" />
-        <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full gradient-primary border-2 border-card text-[8px] font-bold flex items-center justify-center text-primary-foreground">3</span>
-      </button>
+      <NotificationDropdown />
 
       <div className="flex items-center gap-2">
         <Avatar className="h-8 w-8">

@@ -3,8 +3,9 @@ import { DoctorLayout } from '@/components/doctor/DoctorLayout';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { useAuth } from '@/context/AuthContext';
 import { doctors, patients, villages, Patient } from '@/data/mockData';
-import { Users, MapPin, AlertTriangle, Activity, Eye, X } from 'lucide-react';
+import { Users, MapPin, AlertTriangle, Activity, Eye, X, Video } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const severityConfig = {
   normal: { label: 'Normal', className: 'bg-success/10 text-success border border-success/20' },
@@ -15,6 +16,7 @@ const severityConfig = {
 export default function DoctorDashboard() {
   const { user } = useAuth();
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const navigate = useNavigate();
 
   // Find doctor data
   const doctor = doctors.find(d => d.id === user?.doctorId);
@@ -94,13 +96,22 @@ export default function DoctorDashboard() {
                         </td>
                         <td className="py-3 px-4 text-muted-foreground text-xs hidden sm:table-cell">{patient.time}</td>
                         <td className="py-3 px-4 text-right">
-                          <button
-                            onClick={() => setSelectedPatient(patient)}
-                            className="rounded-md px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary/10 transition-colors"
-                          >
-                            <Eye className="h-3.5 w-3.5 inline mr-1" />
-                            View
-                          </button>
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => setSelectedPatient(patient)}
+                              className="rounded-md px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary/10 transition-colors"
+                            >
+                              <Eye className="h-3.5 w-3.5 inline mr-1" />
+                              View
+                            </button>
+                            <button
+                              onClick={() => navigate(`/doctor/consultation/${patient.id}`)}
+                              className="rounded-md px-3 py-1 text-xs font-semibold text-white bg-primary hover:bg-primary/90 transition-colors shadow-sm"
+                            >
+                              <Video className="h-3.5 w-3.5 inline mr-1" />
+                              Consult
+                            </button>
+                          </div>
                         </td>
                       </motion.tr>
                     ))

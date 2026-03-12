@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 
-type RoleTab = 'admin' | 'doctor';
+type RoleTab = 'admin' | 'doctor' | 'worker';
 
 export default function Login() {
   const [activeTab, setActiveTab] = useState<RoleTab>('admin');
@@ -45,17 +45,24 @@ export default function Login() {
       return;
     }
 
-    // Redirect based on role
+    // Redirect based on user role (from auth state) rather than just the active tab
+    // This makes the transition more robust if the user uses the "wrong" tab but right credentials
+    const { user } = result as any; // We can assume success means user is set if we return it, or just use useAuth state after a tick
+    // But since login might not have returned the user, let's use the tab as a fallback or just check role
+    
     if (activeTab === 'admin') {
       navigate('/');
-    } else {
+    } else if (activeTab === 'doctor') {
       navigate('/doctor');
+    } else {
+      navigate('/worker');
     }
   };
 
   const placeholders = {
     admin: { email: 'admin@swastyaconnect.in', hint: 'Use: admin@swastyaconnect.in / admin123' },
     doctor: { email: 'harpreet@swastyaconnect.in', hint: 'Use any doctor email / doctor123' },
+    worker: { email: 'worker@swastyaconnect.in', hint: 'Use: worker@swastyaconnect.in / worker123' },
   };
 
   return (
@@ -81,6 +88,7 @@ export default function Login() {
             {([
               { key: 'admin' as const, label: 'Admin', icon: Shield },
               { key: 'doctor' as const, label: 'Doctor', icon: Stethoscope },
+              { key: 'worker' as const, label: 'Worker', icon: Users },
             ] as const).map(({ key, label, icon: Icon }) => (
               <button
                 key={key}
@@ -92,7 +100,7 @@ export default function Login() {
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
-                {label} Login
+                {label}
               </button>
             ))}
           </div>
@@ -175,34 +183,55 @@ export default function Login() {
               </Button>
             </form>
           ) : (
-            // Doctor Login Form (OTP Based)
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              navigate('/doctor-verify', { state: { phone: email, isExistingUser: true } });
-            }} className="space-y-4">
+            // Doctor Login Form (Email & Password)
+            <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-foreground mb-1.5 block">Phone Number</label>
+                <label className="text-xs font-medium text-foreground mb-1.5 block">Email Address</label>
                 <input
-                  type="tel"
+                  type="email"
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="+91-98765-43210"
+                  onChange={e => { setEmail(e.target.value); setError(''); }}
+                  placeholder={placeholders.doctor.email}
                   className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring transition-shadow"
                   required
                 />
-                <p className="text-[10px] text-muted-foreground mt-1">We will send an OTP to verify your identity</p>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-foreground mb-1.5 block">Password</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={e => { setPassword(e.target.value); setError(''); }}
+                    placeholder="••••••••"
+                    className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring transition-shadow pr-10"
+                    required
+                  />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-1">{placeholders.doctor.hint}</p>
               </div>
 
               <Button
                 type="submit"
+                disabled={isLoading}
                 className="w-full gradient-primary text-primary-foreground shadow-elevated hover:opacity-90 transition-opacity"
               >
-                Send OTP
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-3.5 w-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                    Signing in...
+                  </span>
+                ) : (
+                  `Sign In as ${activeTab === 'doctor' ? 'Doctor' : 'Health Worker'}`
+                )}
               </Button>
 
               <p className="text-center text-xs text-muted-foreground mt-4">
                 New doctor?{' '}
-                <Link to="/doctor-signup" className="text-primary hover:underline font-medium">
+                <Link to="/register" className="text-primary hover:underline font-medium">
                   Register here
                 </Link>
               </p>

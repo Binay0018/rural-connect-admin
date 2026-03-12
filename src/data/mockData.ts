@@ -17,16 +17,29 @@ export interface Doctor {
 
 export type Severity = 'normal' | 'severe' | 'emergency';
 
+export interface Vitals {
+  bp: string;
+  temp: number; // Fahrenheit
+  weight: number; // kg
+  spo2: number; // percentage
+  heartRate: number; // bpm
+}
+
 export interface Patient {
   id: string;
   name: string;
   age: number;
+  gender: 'Male' | 'Female' | 'Other';
   village: string;
   symptoms: string;
   severity: Severity;
   time: string;
   doctorId: string;
   notes?: string;
+  contact?: string;
+  vitals?: Vitals;
+  medicalHistory?: string[];
+  allergies?: string[];
 }
 
 
@@ -223,28 +236,42 @@ export const coverageStats = {
 };
 
 export const patients: Patient[] = [
-  { id: 'p1', name: 'Gurjeet Kaur', age: 34, village: 'Bhadson', symptoms: 'High fever, chills, body ache', severity: 'severe', time: '8:30 AM', doctorId: 'd1', notes: 'Suspected malaria. Blood test ordered.' },
-  { id: 'p2', name: 'Baldev Singh', age: 68, village: 'Amloh', symptoms: 'Chest pain, shortness of breath', severity: 'emergency', time: '8:45 AM', doctorId: 'd1', notes: 'Possible cardiac event. Referred to cardiologist.' },
-  { id: 'p3', name: 'Priya Rani', age: 22, village: 'Bhadson', symptoms: 'Skin rash, itching', severity: 'normal', time: '9:00 AM', doctorId: 'd1' },
-  { id: 'p4', name: 'Harbhajan Lal', age: 55, village: 'Dhuri', symptoms: 'Persistent cough, weight loss', severity: 'severe', time: '9:15 AM', doctorId: 'd1', notes: 'TB screening requested.' },
-  { id: 'p5', name: 'Amrita Devi', age: 29, village: 'Moonak', symptoms: 'Headache, nausea', severity: 'normal', time: '9:30 AM', doctorId: 'd1' },
-  { id: 'p6', name: 'Sukhwinder Singh', age: 45, village: 'Lehra', symptoms: 'High BP, dizziness', severity: 'severe', time: '9:45 AM', doctorId: 'd1' },
-  { id: 'p7', name: 'Tejpal Kaur', age: 8, village: 'Bhadson', symptoms: 'Diarrhea, vomiting', severity: 'emergency', time: '10:00 AM', doctorId: 'd1', notes: 'Severe dehydration. IV fluids started.' },
-  { id: 'p8', name: 'Ranjit Kumar', age: 60, village: 'Sunam', symptoms: 'Diabetes check-up', severity: 'normal', time: '10:15 AM', doctorId: 'd1' },
+  { 
+    id: 'p1', name: 'Gurjeet Kaur', age: 34, gender: 'Female', village: 'Bhadson', 
+    symptoms: 'High fever, chills, body ache', severity: 'severe', time: '8:30 AM', doctorId: 'd1', 
+    notes: 'Suspected malaria. Blood test ordered.', contact: '+91-98765-11111',
+    vitals: { bp: '110/70', temp: 102.4, weight: 62, spo2: 96, heartRate: 98 },
+    medicalHistory: ['Frequent migraines', 'Asthma (childhood)'],
+    allergies: ['Penicillin']
+  },
+  { 
+    id: 'p2', name: 'Baldev Singh', age: 68, gender: 'Male', village: 'Amloh', 
+    symptoms: 'Chest pain, shortness of breath', severity: 'emergency', time: '8:45 AM', doctorId: 'd1', 
+    notes: 'Possible cardiac event. Referred to cardiologist.', contact: '+91-98765-22222',
+    vitals: { bp: '160/100', temp: 98.6, weight: 85, spo2: 92, heartRate: 115 },
+    medicalHistory: ['Hypertension', 'Type 2 Diabetes'],
+    allergies: ['None']
+  },
+  { id: 'p3', name: 'Priya Rani', age: 22, gender: 'Female', village: 'Bhadson', symptoms: 'Skin rash, itching', severity: 'normal', time: '9:00 AM', doctorId: 'd1', contact: '+91-98765-33333', vitals: { bp: '120/80', temp: 98.2, weight: 55, spo2: 99, heartRate: 72 } },
+  { id: 'p4', name: 'Harbhajan Lal', age: 55, gender: 'Male', village: 'Dhuri', symptoms: 'Persistent cough, weight loss', severity: 'severe', time: '9:15 AM', doctorId: 'd1', notes: 'TB screening requested.', contact: '+91-98765-44444', vitals: { bp: '130/85', temp: 99.1, weight: 60, spo2: 95, heartRate: 88 }, medicalHistory: ['Smoker'] },
+  { id: 'p5', name: 'Amrita Devi', age: 29, gender: 'Female', village: 'Moonak', symptoms: 'Headache, nausea', severity: 'normal', time: '9:30 AM', doctorId: 'd1' },
+  { id: 'p6', name: 'Sukhwinder Singh', age: 45, gender: 'Male', village: 'Lehra', symptoms: 'High BP, dizziness', severity: 'severe', time: '9:45 AM', doctorId: 'd1' },
+  { id: 'p7', name: 'Tejpal Kaur', age: 8, gender: 'Female', village: 'Bhadson', symptoms: 'Diarrhea, vomiting', severity: 'emergency', time: '10:00 AM', doctorId: 'd1', notes: 'Severe dehydration. IV fluids started.' },
+  { id: 'p8', name: 'Ranjit Kumar', age: 60, gender: 'Male', village: 'Sunam', symptoms: 'Diabetes check-up', severity: 'normal', time: '10:15 AM', doctorId: 'd1' },
   // Doctor d2 patients
-  { id: 'p9', name: 'Simran Kaur', age: 5, village: 'Sangrur', symptoms: 'Fever, loss of appetite', severity: 'normal', time: '9:00 AM', doctorId: 'd2' },
-  { id: 'p10', name: 'Harleen Bedi', age: 3, village: 'Malerkotla', symptoms: 'Breathing difficulty', severity: 'emergency', time: '9:30 AM', doctorId: 'd2', notes: 'Bronchospasm suspected, inhaler given.' },
-  { id: 'p11', name: 'Parmjit Singh', age: 7, village: 'Longowal', symptoms: 'Ear pain, runny nose', severity: 'normal', time: '10:00 AM', doctorId: 'd2' },
-  { id: 'p12', name: 'Naveen Kumar', age: 4, village: 'Dirba', symptoms: 'Skin rash after vaccine', severity: 'severe', time: '10:30 AM', doctorId: 'd2' },
+  { id: 'p9', name: 'Simran Kaur', age: 5, gender: 'Female', village: 'Sangrur', symptoms: 'Fever, loss of appetite', severity: 'normal', time: '9:00 AM', doctorId: 'd2' },
+  { id: 'p10', name: 'Harleen Bedi', age: 3, gender: 'Female', village: 'Malerkotla', symptoms: 'Breathing difficulty', severity: 'emergency', time: '9:30 AM', doctorId: 'd2', notes: 'Bronchospasm suspected, inhaler given.' },
+  { id: 'p11', name: 'Parmjit Singh', age: 7, gender: 'Male', village: 'Longowal', symptoms: 'Ear pain, runny nose', severity: 'normal', time: '10:00 AM', doctorId: 'd2' },
+  { id: 'p12', name: 'Naveen Kumar', age: 4, gender: 'Male', village: 'Dirba', symptoms: 'Skin rash after vaccine', severity: 'severe', time: '10:30 AM', doctorId: 'd2' },
   // Doctor d3 patients
-  { id: 'p13', name: 'Karan Mehta', age: 40, village: 'Sherpur', symptoms: 'Back pain, unable to walk', severity: 'severe', time: '8:00 AM', doctorId: 'd3', notes: 'MRI ordered. Possible disc herniation.' },
-  { id: 'p14', name: 'Gurmail Singh', age: 72, village: 'Nandgarh', symptoms: 'Joint pain, swelling', severity: 'normal', time: '8:30 AM', doctorId: 'd3' },
-  { id: 'p15', name: 'Manjit Randhawa', age: 35, village: 'Kotra', symptoms: 'Fracture follow-up', severity: 'normal', time: '9:00 AM', doctorId: 'd3' },
+  { id: 'p13', name: 'Karan Mehta', age: 40, gender: 'Male', village: 'Sherpur', symptoms: 'Back pain, unable to walk', severity: 'severe', time: '8:00 AM', doctorId: 'd3', notes: 'MRI ordered. Possible disc herniation.' },
+  { id: 'p14', name: 'Gurmail Singh', age: 72, gender: 'Male', village: 'Nandgarh', symptoms: 'Joint pain, swelling', severity: 'normal', time: '8:30 AM', doctorId: 'd3' },
+  { id: 'p15', name: 'Manjit Randhawa', age: 35, gender: 'Female', village: 'Kotra', symptoms: 'Fracture follow-up', severity: 'normal', time: '9:00 AM', doctorId: 'd3' },
   // Doctor d4 patients
-  { id: 'p16', name: 'Sushma Devi', age: 26, village: 'Phul', symptoms: 'Pregnancy check-up, 7 months', severity: 'normal', time: '9:00 AM', doctorId: 'd4' },
-  { id: 'p17', name: 'Kavita Sharma', age: 32, village: 'Rampura', symptoms: 'Severe abdominal cramps', severity: 'emergency', time: '9:30 AM', doctorId: 'd4', notes: 'Possible ectopic pregnancy. Emergency referral initiated.' },
-  { id: 'p18', name: 'Geeta Bai', age: 45, village: 'Talwandi Sabo', symptoms: 'Irregular periods, hormonal issue', severity: 'normal', time: '10:00 AM', doctorId: 'd4' },
+  { id: 'p16', name: 'Sushma Devi', age: 26, gender: 'Female', village: 'Phul', symptoms: 'Pregnancy check-up, 7 months', severity: 'normal', time: '9:00 AM', doctorId: 'd4' },
+  { id: 'p17', name: 'Kavita Sharma', age: 32, gender: 'Female', village: 'Rampura', symptoms: 'Severe abdominal cramps', severity: 'emergency', time: '9:30 AM', doctorId: 'd4', notes: 'Possible ectopic pregnancy. Emergency referral initiated.' },
+  { id: 'p18', name: 'Geeta Bai', age: 45, gender: 'Female', village: 'Talwandi Sabo', symptoms: 'Irregular periods, hormonal issue', severity: 'normal', time: '10:00 AM', doctorId: 'd4' },
   // Doctor d5 patients
-  { id: 'p19', name: 'Darshan Singh', age: 55, village: 'Sardulgarh', symptoms: 'Persistent cold, fever', severity: 'normal', time: '10:00 AM', doctorId: 'd5' },
-  { id: 'p20', name: 'Labhvir Kaur', age: 38, village: 'Jakhal', symptoms: 'Stomach ache, acidity', severity: 'normal', time: '10:30 AM', doctorId: 'd5' },
+  { id: 'p19', name: 'Darshan Singh', age: 55, gender: 'Male', village: 'Sardulgarh', symptoms: 'Persistent cold, fever', severity: 'normal', time: '10:00 AM', doctorId: 'd5' },
+  { id: 'p20', name: 'Labhvir Kaur', age: 38, gender: 'Female', village: 'Jakhal', symptoms: 'Stomach ache, acidity', severity: 'normal', time: '10:30 AM', doctorId: 'd5' },
 ];

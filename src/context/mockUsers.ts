@@ -1,6 +1,6 @@
 // Mock user store for SwastyaConnect auth simulation
 
-export type UserRole = 'admin' | 'doctor';
+export type UserRole = 'admin' | 'doctor' | 'worker';
 
 export interface MockUser {
   id: string;
@@ -23,6 +23,15 @@ export const mockUserStore: MockUser[] = [
     email: 'admin@swastyaconnect.in',
     password: 'admin123',
     role: 'admin',
+    status: 'active',
+  },
+  // Health Worker
+  {
+    id: 'w1',
+    name: 'Asha Worker',
+    email: 'worker@swastyaconnect.in',
+    password: 'worker123',
+    role: 'worker',
     status: 'active',
   },
   // Verified doctors

@@ -8,12 +8,25 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 
+import { DocumentModal } from '@/components/admin/DocumentModal';
+
 export default function DoctorVerification() {
   const { approveDoctorByEmail, rejectDoctorByEmail } = useAuth();
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'verified' | 'rejected'>('all');
   const [search, setSearch] = useState('');
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [doctorList, setDoctorList] = useState(doctors);
+  
+  // Document Viewer State
+  const [docModalOpen, setDocModalOpen] = useState(false);
+  const [docType, setDocType] = useState<'medical-cert' | 'govt-id' | null>(null);
+  const [docDoctorName, setDocDoctorName] = useState('');
+
+  const openDocument = (type: 'medical-cert' | 'govt-id', doctorName: string) => {
+    setDocType(type);
+    setDocDoctorName(doctorName);
+    setDocModalOpen(true);
+  };
 
   const filtered = doctorList.filter(d => {
     if (statusFilter !== 'all' && d.status !== statusFilter) return false;
@@ -115,11 +128,11 @@ export default function DoctorVerification() {
                       <td className="py-3 px-4 text-muted-foreground hidden lg:table-cell">{doc.specialization}</td>
                       <td className="py-3 px-4 hidden xl:table-cell">
                         <div className="flex gap-1.5">
-                          <span className="flex items-center gap-1 text-xs text-primary hover:underline cursor-pointer">
+                          <span onClick={() => openDocument('medical-cert', doc.name)} className="flex items-center gap-1 text-xs text-primary hover:underline cursor-pointer">
                             <FileText className="h-3 w-3" />Medical Cert
                           </span>
                           <span className="text-muted-foreground">·</span>
-                          <span className="flex items-center gap-1 text-xs text-primary hover:underline cursor-pointer">
+                          <span onClick={() => openDocument('govt-id', doc.name)} className="flex items-center gap-1 text-xs text-primary hover:underline cursor-pointer">
                             <FileText className="h-3 w-3" />Govt ID
                           </span>
                         </div>
@@ -203,11 +216,11 @@ export default function DoctorVerification() {
                 <div className="rounded-lg bg-muted p-3">
                   <p className="text-xs font-semibold text-muted-foreground mb-2">Uploaded Documents</p>
                   <div className="space-y-1.5">
-                    <div className="flex items-center gap-2 text-xs text-primary cursor-pointer hover:underline">
+                    <div onClick={() => openDocument('medical-cert', selectedDoctor.name)} className="flex items-center gap-2 text-xs text-primary cursor-pointer hover:underline">
                       <FileText className="h-3.5 w-3.5" />
                       Medical Certificate (mock-certificate.pdf)
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-primary cursor-pointer hover:underline">
+                    <div onClick={() => openDocument('govt-id', selectedDoctor.name)} className="flex items-center gap-2 text-xs text-primary cursor-pointer hover:underline">
                       <FileText className="h-3.5 w-3.5" />
                       Government ID (mock-govt-id.pdf)
                     </div>
@@ -244,6 +257,13 @@ export default function DoctorVerification() {
             )}
           </DialogContent>
         </Dialog>
+        
+        <DocumentModal 
+          isOpen={docModalOpen} 
+          onClose={() => setDocModalOpen(false)} 
+          documentType={docType} 
+          doctorName={docDoctorName} 
+        />
       </div>
     </DashboardLayout>
   );

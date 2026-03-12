@@ -29,6 +29,11 @@ import DoctorDashboard from "./pages/doctor/DoctorDashboard.tsx";
 import PatientQueue from "./pages/doctor/PatientQueue.tsx";
 import PrescriptionPanel from "./pages/doctor/PrescriptionPanel.tsx";
 import DoctorVillageMap from "./pages/doctor/VillageMap.tsx";
+import ActiveConsultation from "./pages/doctor/ActiveConsultation.tsx";
+
+// Worker pages
+import WorkerDashboard from "./pages/worker/WorkerDashboard.tsx";
+import PatientRegistration from "./pages/worker/PatientRegistration.tsx";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +68,11 @@ const App = () => (
             <Route path="/doctor/queue" element={<ProtectedRoute allowedRoles={["doctor"]}><PatientQueue /></ProtectedRoute>} />
             <Route path="/doctor/prescriptions" element={<ProtectedRoute allowedRoles={["doctor"]}><PrescriptionPanel /></ProtectedRoute>} />
             <Route path="/doctor/map" element={<ProtectedRoute allowedRoles={["doctor"]}><DoctorVillageMap /></ProtectedRoute>} />
+            <Route path="/doctor/consultation/:id" element={<ProtectedRoute allowedRoles={["doctor"]}><ActiveConsultation /></ProtectedRoute>} />
+
+            {/* Worker-only routes */}
+            <Route path="/worker" element={<ProtectedRoute allowedRoles={["worker"]}><WorkerDashboard /></ProtectedRoute>} />
+            <Route path="/worker/register" element={<ProtectedRoute allowedRoles={["worker"]}><PatientRegistration /></ProtectedRoute>} />
 
             {/* Fallback */}
             <Route path="*" element={<NotFound />} />

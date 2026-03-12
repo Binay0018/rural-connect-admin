@@ -2,8 +2,10 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { coverageStats, doctors, villages } from '@/data/mockData';
 import { MapPin, Users, AlertTriangle, Shield } from 'lucide-react';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { motion } from 'framer-motion';
+import { DoctorActivityChart } from '@/components/admin/DoctorActivityChart';
+import { RegistrationTrendsChart } from '@/components/admin/RegistrationTrendsChart';
 
 const coveragePieData = [
   { name: 'Covered', value: coverageStats.covered, color: 'hsl(142, 71%, 45%)' },
@@ -62,33 +64,31 @@ export default function CoverageAnalytics() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="rounded-lg border border-border bg-card p-5 shadow-card">
-            <h3 className="text-sm font-semibold text-card-foreground mb-4">Doctor Workload Distribution</h3>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={doctorWorkloadData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 20%, 90%)" />
-                <XAxis dataKey="name" tick={{ fontSize: 10, fill: 'hsl(215, 16%, 47%)' }} />
-                <YAxis tick={{ fontSize: 10, fill: 'hsl(215, 16%, 47%)' }} />
-                <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid hsl(214, 20%, 90%)', fontSize: '12px' }} />
-                <Legend wrapperStyle={{ fontSize: '11px' }} />
-                <Bar dataKey="villages" name="Villages" fill="hsl(221, 83%, 53%)" radius={[3, 3, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <h3 className="text-sm font-semibold text-card-foreground mb-4">Doctor Patient Activity (This Week)</h3>
+            <DoctorActivityChart />
           </motion.div>
         </div>
 
-        {/* Distance Distribution */}
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="rounded-lg border border-border bg-card p-5 shadow-card">
-          <h3 className="text-sm font-semibold text-card-foreground mb-4">Village Distance to Nearest Doctor</h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={distanceDistribution} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 20%, 90%)" />
-              <XAxis dataKey="range" tick={{ fontSize: 11, fill: 'hsl(215, 16%, 47%)' }} />
-              <YAxis tick={{ fontSize: 11, fill: 'hsl(215, 16%, 47%)' }} />
-              <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid hsl(214, 20%, 90%)', fontSize: '12px' }} />
-              <Bar dataKey="count" name="Villages" fill="hsl(199, 89%, 48%)" radius={[3, 3, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </motion.div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Distance Distribution */}
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="rounded-lg border border-border bg-card p-5 shadow-card">
+            <h3 className="text-sm font-semibold text-card-foreground mb-4">Village Distance to Nearest Doctor</h3>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={distanceDistribution} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 20%, 90%)" />
+                <XAxis dataKey="range" tick={{ fontSize: 11, fill: 'hsl(215, 16%, 47%)' }} />
+                <YAxis tick={{ fontSize: 11, fill: 'hsl(215, 16%, 47%)' }} />
+                <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid hsl(214, 20%, 90%)', fontSize: '12px' }} />
+                <Bar dataKey="count" name="Villages" fill="hsl(199, 89%, 48%)" radius={[3, 3, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="rounded-lg border border-border bg-card p-5 shadow-card">
+            <h3 className="text-sm font-semibold text-card-foreground mb-4">Doctor Registration Trends (30 Days)</h3>
+            <RegistrationTrendsChart />
+          </motion.div>
+        </div>
 
         {/* Uncovered Villages Table */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="rounded-lg border border-border bg-card shadow-card overflow-hidden">

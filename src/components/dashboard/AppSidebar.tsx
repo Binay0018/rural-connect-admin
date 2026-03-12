@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Map, UserCheck, Building2, BarChart3,
-  Bell, Settings, LogOut, Heart, ChevronLeft,
+  Bell, Settings, LogOut, Heart, ChevronLeft, Users, FilePlus
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -12,7 +12,14 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
 
-const mainNav = [
+type NavItem = {
+  title: string;
+  url: string;
+  icon: any;
+  badge?: number | null;
+};
+
+const adminNav: NavItem[] = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
   { title: 'Rural Coverage', url: '/admin/rural-coverage', icon: Map },
   { title: 'Map View', url: '/map', icon: Map },
@@ -23,7 +30,19 @@ const mainNav = [
   { title: 'Notifications', url: '/notifications', icon: Bell, badge: 3 },
 ];
 
-const bottomNav = [
+const doctorNav: NavItem[] = [
+  { title: 'Dashboard', url: '/doctor', icon: LayoutDashboard },
+  { title: 'Patient Queue', url: '/doctor/queue', icon: Users },
+  { title: 'Village Map', url: '/doctor/map', icon: Map },
+  { title: 'Prescriptions', url: '/doctor/prescriptions', icon: Building2 },
+];
+
+const workerNav: NavItem[] = [
+  { title: 'Dashboard', url: '/worker', icon: LayoutDashboard },
+  { title: 'Register Patient', url: '/worker/register', icon: FilePlus },
+];
+
+const bottomNav: NavItem[] = [
   { title: 'Settings', url: '/settings', icon: Settings },
 ];
 
@@ -33,6 +52,11 @@ export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, user } = useAuth();
+
+  const mainNav = user?.role === 'admin' ? adminNav 
+                : user?.role === 'doctor' ? doctorNav 
+                : user?.role === 'worker' ? workerNav 
+                : [];
 
   const handleLogout = () => {
     logout();

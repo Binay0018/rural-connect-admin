@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { verifyDoctorOtp, saveDoctorToken, sendDoctorOtp } from '@/services/authService';
 import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
 
 interface LocationState {
   phone?: string;
@@ -82,12 +83,15 @@ export default function DoctorOtpVerify() {
       const isApproved = res.user?.isActive === true || res.user?.approved === true;
 
       if (!isApproved) {
+        toast.success('Wait for Approval', { description: 'Your OTP was verified but you are pending admin review.'});
         setPendingApproval(true);
       } else {
+        toast.success('Verification Successful', { description: 'Welcome back to SwastyaConnect!' });
         navigate('/doctor');
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'OTP verification failed. Please try again.';
+      toast.error('Verification Failed', { description: msg });
       setError(msg);
     } finally {
       setIsLoading(false);

@@ -1,11 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
-import { getPendingDoctors, approveDoctor, rejectDoctor, PendingDoctor } from '@/services/adminService';
+import { PendingDoctor } from '@/services/adminService';
+import { useAuth } from '@/context/AuthContext';
 import {
   UserCheck, RefreshCw, AlertCircle, CheckCircle, XCircle,
-  Loader2, Clock, Phone, Calendar, Hash,
+  Loader2, Clock, Phone, Calendar, Hash, FileText,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DocumentModal } from '@/components/admin/DocumentModal';
+import { toast } from 'sonner';
 
 type ActionState = { id: string; action: 'approving' | 'rejecting' } | null;
 
@@ -30,14 +33,39 @@ export default function DoctorVerificationPanel() {
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
   const [recentActions, setRecentActions] = useState<{ msg: string; ok: boolean }[]>([]);
 
+  // Document Viewer State
+  const [docModalOpen, setDocModalOpen] = useState(false);
+  const [docType, setDocType] = useState<'medical-cert' | 'govt-id' | null>(null);
+  const [docDoctorName, setDocDoctorName] = useState('');
+
+  const openDocument = (type: 'medical-cert' | 'govt-id', doctorName: string) => {
+    setDocType(type);
+    setDocDoctorName(doctorName);
+    setDocModalOpen(true);
+  };
+
+  const { getPendingDoctors, approveDoctorByEmail, rejectDoctorByEmail } = useAuth();
+
   const fetchPending = useCallback(async () => {
     setIsLoading(true);
     setFetchError('');
     setActionError('');
     try {
-      const data = await getPendingDoctors();
-      setPending(data.pending ?? []);
-      setCount(data.count ?? data.pending?.length ?? 0);
+      // Simulate network delay
+      await new Promise(r => setTimeout(r, 400));
+      const mockPending = getPendingDoctors();
+      
+      // Map MockUser to PendingDoctor shape expected by UI
+      const mapped: PendingDoctor[] = mockPending.map(u => ({
+        id: u.id,
+        doctorId: u.doctorId || 'Pending...',
+        name: u.name,
+        phone: u.email, // using email as phone/contact identifier in this view
+        createdAt: new Date().toISOString(), // mock data doesn't have dates
+      }));
+
+      setPending(mapped);
+      setCount(mapped.length);
       setLastRefreshed(new Date());
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to load pending doctors.';
@@ -45,7 +73,7 @@ export default function DoctorVerificationPanel() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [getPendingDoctors]);
 
   useEffect(() => { fetchPending(); }, [fetchPending]);
 
@@ -53,15 +81,18 @@ export default function DoctorVerificationPanel() {
     setActionState({ id: doc.id, action: 'approving' });
     setActionError('');
     try {
-      await approveDoctor(doc.id);
+      await new Promise(r => setTimeout(r, 500));
+      approveDoctorByEmail(doc.phone); // email is stored in phone field in mapping
       setPending(prev => prev.filter(d => d.id !== doc.id));
       setCount(c => Math.max(0, c - 1));
+      toast.success('Doctor Approved Successfully', { description: `${doc.name} (${doc.doctorId}) is now verified.` });
       setRecentActions(prev => [
         { msg: `✓ Approved: ${doc.name} (${doc.doctorId})`, ok: true },
         ...prev.slice(0, 4),
       ]);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to approve doctor.';
+      toast.error('Approval Failed', { description: msg });
       setActionError(`Approve failed for ${doc.name}: ${msg}`);
     } finally {
       setActionState(null);
@@ -72,15 +103,18 @@ export default function DoctorVerificationPanel() {
     setActionState({ id: doc.id, action: 'rejecting' });
     setActionError('');
     try {
-      await rejectDoctor(doc.id);
+      await new Promise(r => setTimeout(r, 500));
+      rejectDoctorByEmail(doc.phone);
       setPending(prev => prev.filter(d => d.id !== doc.id));
       setCount(c => Math.max(0, c - 1));
+      toast.info('Doctor Rejected', { description: `${doc.name} has been rejected from the platform.` });
       setRecentActions(prev => [
         { msg: `✗ Rejected: ${doc.name} (${doc.doctorId})`, ok: false },
         ...prev.slice(0, 4),
       ]);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to reject doctor.';
+      toast.error('Rejection Failed', { description: msg });
       setActionError(`Reject failed for ${doc.name}: ${msg}`);
     } finally {
       setActionState(null);
@@ -310,6 +344,13 @@ export default function DoctorVerificationPanel() {
         </AnimatePresence>
 
       </div>
+      
+      <DocumentModal 
+        isOpen={docModalOpen} 
+        onClose={() => setDocModalOpen(false)} 
+        documentType={docType} 
+        doctorName={docDoctorName} 
+      />
     </DashboardLayout>
   );
 }

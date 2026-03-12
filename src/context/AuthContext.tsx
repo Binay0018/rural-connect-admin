@@ -29,6 +29,7 @@ interface AuthContextType {
   register: (data: RegisterData) => Promise<{ success: boolean; error?: string }>;
   approveDoctorByEmail: (email: string) => void;
   rejectDoctorByEmail: (email: string) => void;
+  getPendingDoctors: () => MockUser[];
   /** Called after successful OTP verification to set the doctor session */
   loginWithOtpToken: (token: string, backendUser: VerifyOtpResponse['user']) => void;
 }
@@ -190,6 +191,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (idx !== -1) mockUserStore[idx].status = 'rejected';
   };
 
+  const getPendingDoctors = () => {
+    return mockUserStore.filter(u => u.role === 'doctor' && u.status === 'pending');
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -200,6 +205,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register,
         approveDoctorByEmail,
         rejectDoctorByEmail,
+        getPendingDoctors,
         loginWithOtpToken,
       }}
     >
