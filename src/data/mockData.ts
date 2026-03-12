@@ -3,6 +3,7 @@
 export interface Doctor {
   id: string;
   name: string;
+  email: string;
   registrationNumber: string;
   council: string;
   specialization: string;
@@ -13,6 +14,21 @@ export interface Doctor {
   phone: string;
   certificateUrl?: string;
 }
+
+export type Severity = 'normal' | 'severe' | 'emergency';
+
+export interface Patient {
+  id: string;
+  name: string;
+  age: number;
+  village: string;
+  symptoms: string;
+  severity: Severity;
+  time: string;
+  doctorId: string;
+  notes?: string;
+}
+
 
 export interface Village {
   id: string;
@@ -58,17 +74,17 @@ function offset(baseLat: number, baseLng: number, dLat: number, dLng: number) {
 }
 
 export const doctors: Doctor[] = [
-  { id: 'd1', name: 'Dr. Harpreet Singh', registrationNumber: 'PMC-2019-4521', council: 'Punjab Medical Council', specialization: 'General Medicine', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, 0, 0), assignedVillages: [], phone: '+91-98765-43210' },
-  { id: 'd2', name: 'Dr. Amandeep Kaur', registrationNumber: 'PMC-2020-3312', council: 'Punjab Medical Council', specialization: 'Pediatrics', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, 0.05, 0.04), assignedVillages: [], phone: '+91-98765-43211' },
-  { id: 'd3', name: 'Dr. Rajinder Sharma', registrationNumber: 'PMC-2018-7891', council: 'Punjab Medical Council', specialization: 'Orthopedics', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, -0.04, 0.06), assignedVillages: [], phone: '+91-98765-43212' },
-  { id: 'd4', name: 'Dr. Simran Dhillon', registrationNumber: 'PMC-2021-1245', council: 'Punjab Medical Council', specialization: 'Gynecology', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, 0.08, -0.03), assignedVillages: [], phone: '+91-98765-43213' },
-  { id: 'd5', name: 'Dr. Gurpreet Brar', registrationNumber: 'PMC-2017-6678', council: 'Punjab Medical Council', specialization: 'General Medicine', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, -0.06, -0.05), assignedVillages: [], phone: '+91-98765-43214' },
-  { id: 'd6', name: 'Dr. Navjot Sandhu', registrationNumber: 'PMC-2022-9034', council: 'Punjab Medical Council', specialization: 'Dermatology', status: 'pending', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, 0.03, -0.07), assignedVillages: [], phone: '+91-98765-43215' },
-  { id: 'd7', name: 'Dr. Prabhjot Mann', registrationNumber: 'PMC-2019-5567', council: 'Punjab Medical Council', specialization: 'ENT', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, -0.02, 0.09), assignedVillages: [], phone: '+91-98765-43216' },
-  { id: 'd8', name: 'Dr. Kamaljit Gill', registrationNumber: 'PMC-2020-2234', council: 'Punjab Medical Council', specialization: 'Ophthalmology', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, 0.07, 0.07), assignedVillages: [], phone: '+91-98765-43217' },
-  { id: 'd9', name: 'Dr. Balwinder Sidhu', registrationNumber: 'PMC-2016-8901', council: 'Punjab Medical Council', specialization: 'Cardiology', status: 'rejected', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, -0.08, 0.02), assignedVillages: [], phone: '+91-98765-43218' },
-  { id: 'd10', name: 'Dr. Manpreet Atwal', registrationNumber: 'PMC-2021-3456', council: 'Punjab Medical Council', specialization: 'General Medicine', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, 0.01, -0.09), assignedVillages: [], phone: '+91-98765-43219' },
-  { id: 'd11', name: 'Dr. Jaspreet Hundal', registrationNumber: 'PMC-2023-1122', council: 'Punjab Medical Council', specialization: 'Psychiatry', status: 'pending', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, -0.09, -0.04), assignedVillages: [], phone: '+91-98765-43220' },
+  { id: 'd1', name: 'Dr. Harpreet Singh', email: 'harpreet@swastyaconnect.in', registrationNumber: 'PMC-2019-4521', council: 'Punjab Medical Council', specialization: 'General Medicine', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, 0, 0), assignedVillages: [], phone: '+91-98765-43210' },
+  { id: 'd2', name: 'Dr. Amandeep Kaur', email: 'amandeep@swastyaconnect.in', registrationNumber: 'PMC-2020-3312', council: 'Punjab Medical Council', specialization: 'Pediatrics', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, 0.05, 0.04), assignedVillages: [], phone: '+91-98765-43211' },
+  { id: 'd3', name: 'Dr. Rajinder Sharma', email: 'rajinder@swastyaconnect.in', registrationNumber: 'PMC-2018-7891', council: 'Punjab Medical Council', specialization: 'Orthopedics', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, -0.04, 0.06), assignedVillages: [], phone: '+91-98765-43212' },
+  { id: 'd4', name: 'Dr. Simran Dhillon', email: 'simran@swastyaconnect.in', registrationNumber: 'PMC-2021-1245', council: 'Punjab Medical Council', specialization: 'Gynecology', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, 0.08, -0.03), assignedVillages: [], phone: '+91-98765-43213' },
+  { id: 'd5', name: 'Dr. Gurpreet Brar', email: 'gurpreet@swastyaconnect.in', registrationNumber: 'PMC-2017-6678', council: 'Punjab Medical Council', specialization: 'General Medicine', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, -0.06, -0.05), assignedVillages: [], phone: '+91-98765-43214' },
+  { id: 'd6', name: 'Dr. Navjot Sandhu', email: 'navjot@swastyaconnect.in', registrationNumber: 'PMC-2022-9034', council: 'Punjab Medical Council', specialization: 'Dermatology', status: 'pending', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, 0.03, -0.07), assignedVillages: [], phone: '+91-98765-43215' },
+  { id: 'd7', name: 'Dr. Prabhjot Mann', email: 'prabhjot@swastyaconnect.in', registrationNumber: 'PMC-2019-5567', council: 'Punjab Medical Council', specialization: 'ENT', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, -0.02, 0.09), assignedVillages: [], phone: '+91-98765-43216' },
+  { id: 'd8', name: 'Dr. Kamaljit Gill', email: 'kamaljit@swastyaconnect.in', registrationNumber: 'PMC-2020-2234', council: 'Punjab Medical Council', specialization: 'Ophthalmology', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, 0.07, 0.07), assignedVillages: [], phone: '+91-98765-43217' },
+  { id: 'd9', name: 'Dr. Balwinder Sidhu', email: 'balwinder@swastyaconnect.in', registrationNumber: 'PMC-2016-8901', council: 'Punjab Medical Council', specialization: 'Cardiology', status: 'rejected', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, -0.08, 0.02), assignedVillages: [], phone: '+91-98765-43218' },
+  { id: 'd10', name: 'Dr. Manpreet Atwal', email: 'manpreet@swastyaconnect.in', registrationNumber: 'PMC-2021-3456', council: 'Punjab Medical Council', specialization: 'General Medicine', status: 'verified', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, 0.01, -0.09), assignedVillages: [], phone: '+91-98765-43219' },
+  { id: 'd11', name: 'Dr. Jaspreet Hundal', email: 'jaspreet@swastyaconnect.in', registrationNumber: 'PMC-2023-1122', council: 'Punjab Medical Council', specialization: 'Psychiatry', status: 'pending', ...offset(NABHA_CENTER.lat, NABHA_CENTER.lng, -0.09, -0.04), assignedVillages: [], phone: '+91-98765-43220' },
 ];
 
 // Generate 173 villages around Nabha
@@ -205,3 +221,30 @@ export const coverageStats = {
   pharmaciesAvailable: pharmacies.length,
   lowStockPharmacies: pharmacies.filter(p => p.medicines.some(m => m.lowStock)).length,
 };
+
+export const patients: Patient[] = [
+  { id: 'p1', name: 'Gurjeet Kaur', age: 34, village: 'Bhadson', symptoms: 'High fever, chills, body ache', severity: 'severe', time: '8:30 AM', doctorId: 'd1', notes: 'Suspected malaria. Blood test ordered.' },
+  { id: 'p2', name: 'Baldev Singh', age: 68, village: 'Amloh', symptoms: 'Chest pain, shortness of breath', severity: 'emergency', time: '8:45 AM', doctorId: 'd1', notes: 'Possible cardiac event. Referred to cardiologist.' },
+  { id: 'p3', name: 'Priya Rani', age: 22, village: 'Bhadson', symptoms: 'Skin rash, itching', severity: 'normal', time: '9:00 AM', doctorId: 'd1' },
+  { id: 'p4', name: 'Harbhajan Lal', age: 55, village: 'Dhuri', symptoms: 'Persistent cough, weight loss', severity: 'severe', time: '9:15 AM', doctorId: 'd1', notes: 'TB screening requested.' },
+  { id: 'p5', name: 'Amrita Devi', age: 29, village: 'Moonak', symptoms: 'Headache, nausea', severity: 'normal', time: '9:30 AM', doctorId: 'd1' },
+  { id: 'p6', name: 'Sukhwinder Singh', age: 45, village: 'Lehra', symptoms: 'High BP, dizziness', severity: 'severe', time: '9:45 AM', doctorId: 'd1' },
+  { id: 'p7', name: 'Tejpal Kaur', age: 8, village: 'Bhadson', symptoms: 'Diarrhea, vomiting', severity: 'emergency', time: '10:00 AM', doctorId: 'd1', notes: 'Severe dehydration. IV fluids started.' },
+  { id: 'p8', name: 'Ranjit Kumar', age: 60, village: 'Sunam', symptoms: 'Diabetes check-up', severity: 'normal', time: '10:15 AM', doctorId: 'd1' },
+  // Doctor d2 patients
+  { id: 'p9', name: 'Simran Kaur', age: 5, village: 'Sangrur', symptoms: 'Fever, loss of appetite', severity: 'normal', time: '9:00 AM', doctorId: 'd2' },
+  { id: 'p10', name: 'Harleen Bedi', age: 3, village: 'Malerkotla', symptoms: 'Breathing difficulty', severity: 'emergency', time: '9:30 AM', doctorId: 'd2', notes: 'Bronchospasm suspected, inhaler given.' },
+  { id: 'p11', name: 'Parmjit Singh', age: 7, village: 'Longowal', symptoms: 'Ear pain, runny nose', severity: 'normal', time: '10:00 AM', doctorId: 'd2' },
+  { id: 'p12', name: 'Naveen Kumar', age: 4, village: 'Dirba', symptoms: 'Skin rash after vaccine', severity: 'severe', time: '10:30 AM', doctorId: 'd2' },
+  // Doctor d3 patients
+  { id: 'p13', name: 'Karan Mehta', age: 40, village: 'Sherpur', symptoms: 'Back pain, unable to walk', severity: 'severe', time: '8:00 AM', doctorId: 'd3', notes: 'MRI ordered. Possible disc herniation.' },
+  { id: 'p14', name: 'Gurmail Singh', age: 72, village: 'Nandgarh', symptoms: 'Joint pain, swelling', severity: 'normal', time: '8:30 AM', doctorId: 'd3' },
+  { id: 'p15', name: 'Manjit Randhawa', age: 35, village: 'Kotra', symptoms: 'Fracture follow-up', severity: 'normal', time: '9:00 AM', doctorId: 'd3' },
+  // Doctor d4 patients
+  { id: 'p16', name: 'Sushma Devi', age: 26, village: 'Phul', symptoms: 'Pregnancy check-up, 7 months', severity: 'normal', time: '9:00 AM', doctorId: 'd4' },
+  { id: 'p17', name: 'Kavita Sharma', age: 32, village: 'Rampura', symptoms: 'Severe abdominal cramps', severity: 'emergency', time: '9:30 AM', doctorId: 'd4', notes: 'Possible ectopic pregnancy. Emergency referral initiated.' },
+  { id: 'p18', name: 'Geeta Bai', age: 45, village: 'Talwandi Sabo', symptoms: 'Irregular periods, hormonal issue', severity: 'normal', time: '10:00 AM', doctorId: 'd4' },
+  // Doctor d5 patients
+  { id: 'p19', name: 'Darshan Singh', age: 55, village: 'Sardulgarh', symptoms: 'Persistent cold, fever', severity: 'normal', time: '10:00 AM', doctorId: 'd5' },
+  { id: 'p20', name: 'Labhvir Kaur', age: 38, village: 'Jakhal', symptoms: 'Stomach ache, acidity', severity: 'normal', time: '10:30 AM', doctorId: 'd5' },
+];

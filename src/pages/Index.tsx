@@ -1,8 +1,11 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { StatusBadge } from '@/components/dashboard/StatusBadge';
 import { coverageStats, doctors, villages, notifications } from '@/data/mockData';
-import { Users, UserCheck, MapPin, Building2, AlertTriangle, Activity } from 'lucide-react';
+import { getPendingDoctors } from '@/services/adminService';
+import { Users, UserCheck, MapPin, Building2, AlertTriangle, Clock, Activity } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { motion } from 'framer-motion';
 
@@ -21,13 +24,44 @@ const doctorWorkloadData = doctors
   .sort((a, b) => b.villages - a.villages);
 
 const Index = () => {
+  const navigate = useNavigate();
+  const [pendingCount, setPendingCount] = useState<number | null>(null);
+
+  // Fetch pending doctor count from backend
+  useEffect(() => {
+    getPendingDoctors()
+      .then(res => setPendingCount(res.count ?? res.pending?.length ?? 0))
+      .catch(() => setPendingCount(null)); // Silently fail — count just won't show
+  }, []);
+
   return (
     <DashboardLayout title="Dashboard" subtitle="Overview of SwastyaConnect operations">
       <div className="space-y-6">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4">
           <StatsCard title="Total Doctors" value={coverageStats.totalDoctors} icon={Users} variant="info" trend={{ value: 8, positive: true }} />
           <StatsCard title="Verified" value={coverageStats.verifiedDoctors} icon={UserCheck} variant="success" />
+          {/* Live pending count card from backend */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            onClick={() => navigate('/admin/pending-doctors')}
+            className="cursor-pointer rounded-lg border border-warning/30 bg-warning/5 hover:bg-warning/10 p-4 shadow-card transition-colors group"
+            title="Click to review pending doctors"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-medium text-muted-foreground">Pending Approvals</p>
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-warning/10">
+                <Clock className="h-4 w-4 text-warning" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-warning">
+              {pendingCount === null ? '—' : pendingCount}
+            </p>
+            <p className="text-[10px] text-muted-foreground mt-1 group-hover:text-warning transition-colors">
+              {pendingCount === null ? 'Connecting…' : `Doctor${pendingCount !== 1 ? 's' : ''} awaiting review`}
+            </p>
+          </motion.div>
           <StatsCard title="Villages Covered" value={coverageStats.covered} subtitle={`of ${coverageStats.totalVillages}`} icon={MapPin} variant="success" />
           <StatsCard title="Limited Coverage" value={coverageStats.limited} icon={AlertTriangle} variant="warning" />
           <StatsCard title="No Coverage" value={coverageStats.uncovered} icon={MapPin} variant="danger" />

@@ -1,6 +1,5 @@
 import {
-  LayoutDashboard, Map, UserCheck, Building2, BarChart3,
-  Bell, Settings, LogOut, Heart, ChevronLeft,
+  LayoutDashboard, Users, FileText, Map, LogOut, Heart, ChevronLeft, Stethoscope,
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -9,34 +8,31 @@ import {
   SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
   SidebarFooter, SidebarHeader, useSidebar,
 } from '@/components/ui/sidebar';
-import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
-const mainNav = [
-  { title: 'Dashboard', url: '/', icon: LayoutDashboard },
-  { title: 'Map View', url: '/map', icon: Map },
-  { title: 'Pending Doctors', url: '/admin/pending-doctors', icon: UserCheck, badge: null },
-  { title: 'Doctor Verification', url: '/doctors', icon: UserCheck },
-  { title: 'Pharmacy Inventory', url: '/pharmacy', icon: Building2 },
-  { title: 'Coverage Analytics', url: '/analytics', icon: BarChart3 },
-  { title: 'Notifications', url: '/notifications', icon: Bell, badge: 3 },
+const doctorNav = [
+  { title: 'Dashboard', url: '/doctor', icon: LayoutDashboard },
+  { title: 'Patient Queue', url: '/doctor/queue', icon: Users },
+  { title: 'Prescriptions', url: '/doctor/prescriptions', icon: FileText },
+  { title: 'My Villages', url: '/doctor/map', icon: Map },
 ];
 
-const bottomNav = [
-  { title: 'Settings', url: '/settings', icon: Settings },
-];
-
-export function AppSidebar() {
+export function DoctorSidebar() {
   const { state, toggleSidebar } = useSidebar();
   const collapsed = state === 'collapsed';
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout, user } = useAuth();
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
+
+  const initials = user?.name
+    ? user.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
+    : 'DR';
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
@@ -46,9 +42,9 @@ export function AppSidebar() {
             <Heart className="h-4 w-4 text-primary-foreground" fill="currentColor" />
           </div>
           {!collapsed && (
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <span className="text-sm font-bold text-sidebar-primary-foreground tracking-tight">SwastyaConnect</span>
-              <span className="text-[10px] text-sidebar-muted">Admin Portal</span>
+              <span className="text-[10px] text-sidebar-muted">Doctor Portal</span>
             </div>
           )}
           {!collapsed && (
@@ -59,29 +55,43 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
+      {/* Doctor Info Card */}
+      {!collapsed && (
+        <div className="mx-3 mt-3 rounded-lg bg-sidebar-accent px-3 py-2.5">
+          <div className="flex items-center gap-2">
+            <Avatar className="h-8 w-8 shrink-0">
+              <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">{initials}</AvatarFallback>
+            </Avatar>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-sidebar-accent-foreground truncate">{user?.name}</p>
+              <p className="text-[10px] text-sidebar-muted truncate">{user?.specialization || 'Doctor'}</p>
+            </div>
+          </div>
+          <div className="mt-2 flex items-center gap-1">
+            <Stethoscope className="h-3 w-3 text-success" />
+            <span className="text-[10px] text-success font-medium">Verified Doctor</span>
+          </div>
+        </div>
+      )}
+
       <SidebarContent className="px-2 py-3">
         <SidebarGroup>
           <SidebarGroupLabel className="text-sidebar-muted text-[10px] uppercase tracking-wider font-semibold mb-1">
-            {!collapsed && 'Navigation'}
+            {!collapsed && 'Doctor Panel'}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainNav.map((item) => (
+              {doctorNav.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.url}
-                      end={item.url === '/'}
+                      end={item.url === '/doctor'}
                       className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
                       activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
                     >
                       <item.icon className="h-4 w-4 shrink-0" />
                       {!collapsed && <span className="flex-1">{item.title}</span>}
-                      {!collapsed && item.badge && (
-                        <Badge className="h-5 min-w-[20px] rounded-full gradient-primary text-[10px] font-semibold border-0 text-primary-foreground">
-                          {item.badge}
-                        </Badge>
-                      )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -93,23 +103,12 @@ export function AppSidebar() {
 
       <SidebarFooter className="border-t border-sidebar-border px-2 py-3">
         <SidebarMenu>
-          {bottomNav.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <NavLink
-                  to={item.url}
-                  className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
-                  activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
-                >
-                  <item.icon className="h-4 w-4 shrink-0" />
-                  {!collapsed && <span>{item.title}</span>}
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <button onClick={handleLogout} className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-sidebar-foreground hover:bg-destructive/10 hover:text-destructive transition-colors">
+              <button
+                onClick={handleLogout}
+                className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-sidebar-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+              >
                 <LogOut className="h-4 w-4 shrink-0" />
                 {!collapsed && <span>Logout</span>}
               </button>
